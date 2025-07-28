@@ -1,0 +1,14 @@
+# Visual Studio kullanıcı dosyaları
+.vs/
+*.user
+*.suo
+
+# Derleme çıktıları
+bin/
+obj/
+
+# Log dosyaları
+*.log
+
+# Gizli ayarlar
+appsettings.json
