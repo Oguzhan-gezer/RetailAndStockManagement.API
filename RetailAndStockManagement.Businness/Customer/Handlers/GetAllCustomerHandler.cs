@@ -1,4 +1,4 @@
-﻿// Handlers/GetAllCustomerHandler.cs
+// Handlers/GetAllCustomerHandler.cs
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RetailAndStockManagement.Businness.Customer.Models;
@@ -22,7 +22,9 @@ public class GetAllCustomerHandler
             .Select(x => new GetAllCustomerModel
             {
                 Id = x.Id,
-                Username = x.Username
+                Username = x.Username,
+                Address = x.Address,
+                PhoneNumber = x.PhoneNumber
             })
             .ToListAsync(cancellationToken);
     }

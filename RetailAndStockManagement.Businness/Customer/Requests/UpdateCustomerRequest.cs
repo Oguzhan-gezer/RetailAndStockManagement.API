@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using RetailAndStockManagement.Businness.Customer.Models;
 using System;
 using System.Collections.Generic;
@@ -13,4 +13,6 @@ public class UpdateCustomerRequest : IRequest<UpdateCustomerModel>
     public int Id { get; set; }
     public string Username { get; set; }
     public string Password { get; set; }
+    public string? Address { get; set; }
+    public string? PhoneNumber { get; set; }
 }

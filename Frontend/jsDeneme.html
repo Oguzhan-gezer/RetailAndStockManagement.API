@@ -2,126 +2,333 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Stok Kontrol</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RetailStock — Giriş</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f1f1f1;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Animated background circles */
+        body::before, body::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: float 8s ease-in-out infinite;
+        }
+        body::before {
+            width: 400px; height: 400px;
+            background: #7f5af0;
+            top: -100px; left: -100px;
+        }
+        body::after {
+            width: 500px; height: 500px;
+            background: #2cb67d;
+            bottom: -150px; right: -150px;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.05); }
+        }
+
+        .login-container {
+            position: relative;
+            z-index: 10;
+            width: 420px;
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 24px;
+            padding: 48px 40px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
             text-align: center;
-            padding-top: 80px;
+            margin-bottom: 32px;
         }
 
-        h1 {
-            color: #333;
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #7f5af0, #2cb67d);
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 12px;
+            box-shadow: 0 8px 24px rgba(127, 90, 240, 0.4);
         }
 
-        .form-box {
-            background-color: white;
-            display: inline-block;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        .logo h1 {
+            color: #fffffe;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
 
-        input[type="text"], input[type="password"] {
+        .logo p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+            margin-top: 4px;
+            font-weight: 300;
+        }
+
+        .tab-switch {
+            display: flex;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 28px;
+        }
+
+        .tab-switch button {
+            flex: 1;
             padding: 10px;
-            width: 200px;
-            margin: 10px 0;
-            display: block;
+            border: none;
+            border-radius: 10px;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.5);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        button {
-            padding: 10px 20px;
-            margin-top: 10px;
+        .tab-switch button.active {
+            background: linear-gradient(135deg, #7f5af0, #6246ea);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(127, 90, 240, 0.4);
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #fffffe;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.25);
+        }
+
+        .form-group input:focus {
+            border-color: #7f5af0;
+            box-shadow: 0 0 0 3px rgba(127, 90, 240, 0.15);
+            background: rgba(255, 255, 255, 0.09);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #7f5af0, #6246ea);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(127, 90, 240, 0.5);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
         }
 
         #message {
-            margin-top: 15px;
-            color: green;
+            text-align: center;
+            margin-top: 16px;
+            font-size: 13px;
+            min-height: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .msg-success { color: #2cb67d; }
+        .msg-error { color: #e53170; }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 24px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 12px;
         }
     </style>
 </head>
 <body>
 
-    <h1>🗃️ Stok Kontrol</h1>
-    <div class="form-box">
-        <h2>Giriş / Kayıt</h2>
-        <input type="text" id="username" placeholder="Kullanıcı Adı">
-        <input type="password" id="password" placeholder="Şifre">
-        <button onclick="register()">Kaydol</button>
-        <button onclick="login()">Giriş Yap</button>
-        <div id="message"></div>
+<div class="login-container">
+    <div class="logo">
+        <div class="logo-icon">🏬</div>
+        <h1>RetailStock</h1>
+        <p>Stok & Perakende Yönetim Sistemi</p>
     </div>
 
-    <script>
-        async function register() {
-            const data = {
-                username: document.getElementById("username").value,
-                password: document.getElementById("password").value
-            };
+    <div class="tab-switch">
+        <button id="loginTab" class="active" onclick="switchTab('login')">Giriş Yap</button>
+        <button id="registerTab" onclick="switchTab('register')">Kayıt Ol</button>
+    </div>
 
-            try {
-                const response = await fetch("https://localhost:7232/api/Customer/create", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(data)
-                });
+    <div class="form-group">
+        <label>Kullanıcı Adı</label>
+        <input type="text" id="username" placeholder="kullaniciadi">
+    </div>
 
-                
-                const result = await response.json();
+    <div class="form-group">
+        <label>Şifre</label>
+        <input type="password" id="password" placeholder="••••••••">
+    </div>
 
-                if (!response.ok) {
-            document.getElementById("message").innerText = "❌ Hata: " + result.message;
-            return;
-        }
+    <button class="submit-btn" id="submitBtn" onclick="login()">Giriş Yap</button>
 
-                document.getElementById("message").innerText = "✅ Kayıt başarılı: " + result.message;
-            } catch (error) {
-                document.getElementById("message").innerText = "❌ Hata: " + error.message;
-            }
-        }
+    <div id="message"></div>
 
-        async function login() {
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
+    <div class="footer-text">© 2026 RetailStock — Tüm hakları saklıdır.</div>
+</div>
 
-    try {
-        const response = await fetch("https://localhost:7232/api/Customer/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ username, password })
-        });
+<script>
+    let currentTab = 'login';
 
-        if (!response.ok) {
-            throw new Error("Giriş başarısız.");
-        }
-
-        const result = await response.json();
-        console.log("Gelen login yanıtı (JSON):", result);
-
-        // HANGİ alan varsa onu kullan:
-        const customerId = result.id ?? result.customerId ?? null;
-
-        if (!customerId) {
-            alert("Müşteri ID alınamadı.");
-            return;
-        }
-
-        localStorage.setItem("customerId", customerId);
-        localStorage.setItem("username", result.username);
-        window.location.href = "anasayfa.html";
-    } catch (error) {
-        console.error("Login error:", error);
-        alert("Giriş başarısız! Kullanıcı adı veya şifre hatalı.");
+    function switchTab(tab) {
+        currentTab = tab;
+        document.getElementById('loginTab').classList.toggle('active', tab === 'login');
+        document.getElementById('registerTab').classList.toggle('active', tab === 'register');
+        document.getElementById('submitBtn').textContent = tab === 'login' ? 'Giriş Yap' : 'Kayıt Ol';
+        document.getElementById('submitBtn').onclick = tab === 'login' ? login : register;
+        document.getElementById('message').textContent = '';
     }
-}
 
-    </script>
+    function showMessage(text, isError) {
+        const msg = document.getElementById('message');
+        msg.textContent = text;
+        msg.className = isError ? 'msg-error' : 'msg-success';
+    }
+
+    async function register() {
+        const data = {
+            username: document.getElementById("username").value,
+            password: document.getElementById("password").value
+        };
+
+        if (!data.username || !data.password) {
+            showMessage("Lütfen tüm alanları doldurun.", true);
+            return;
+        }
+
+        try {
+            const response = await fetch("https://localhost:7232/api/Customer/create", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                showMessage("❌ " + result.message, true);
+                return;
+            }
+
+            showMessage("✅ Kayıt başarılı! Şimdi giriş yapabilirsiniz.", false);
+            setTimeout(() => switchTab('login'), 1500);
+        } catch (error) {
+            showMessage("❌ Bağlantı hatası: " + error.message, true);
+        }
+    }
+
+    async function login() {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        if (!username || !password) {
+            showMessage("Lütfen tüm alanları doldurun.", true);
+            return;
+        }
+
+        try {
+            const response = await fetch("https://localhost:7232/api/Customer/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password })
+            });
+
+            if (!response.ok) throw new Error("Giriş başarısız.");
+
+            const result = await response.json();
+            const customerId = result.id ?? result.customerId ?? null;
+
+            if (!customerId) {
+                showMessage("❌ Müşteri ID alınamadı.", true);
+                return;
+            }
+
+            localStorage.setItem("customerId", customerId);
+            localStorage.setItem("username", result.username);
+
+            showMessage("✅ Hoş geldiniz, " + result.username + "!", false);
+            setTimeout(() => window.location.href = "anasayfa.html", 800);
+        } catch (error) {
+            showMessage("❌ Kullanıcı adı veya şifre hatalı.", true);
+        }
+    }
+
+    // Enter tuşu desteği
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            if (currentTab === 'login') login();
+            else register();
+        }
+    });
+</script>
 
 </body>
 </html>

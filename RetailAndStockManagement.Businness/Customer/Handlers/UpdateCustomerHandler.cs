@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RetailAndStockManagement.Businness.Customer.Models;
 using RetailAndStockManagement.Businness.Customer.Requests;
@@ -29,6 +29,11 @@ public class UpdateCustomerHandler : IRequestHandler<UpdateCustomerRequest, Upda
         }
 
         customer.Username = request.Username;
+        if (!string.IsNullOrWhiteSpace(request.Password))
+            customer.Password = request.Password;
+        customer.Address = request.Address;
+        customer.PhoneNumber = request.PhoneNumber;
+
         _context.Customers.Update(customer);
         await _context.SaveChangesAsync(cancellationToken);
 

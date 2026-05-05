@@ -1,4 +1,4 @@
-﻿using RetailAndStockManagement.Businness.Customer.Handlers;
+using RetailAndStockManagement.Businness.Customer.Handlers;
 
 var builder = WebApplication.CreateBuilder(args);
 

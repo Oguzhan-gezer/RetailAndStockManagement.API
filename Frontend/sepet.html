@@ -1,403 +1,148 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <title>Sepetim</title>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
-        h2 { color: #333; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
-        th { background-color: #eee; }
-        img { max-width: 100px; max-height: 100px; }
-        button {
-            padding: 6px 12px;
-            background-color: #d9534f;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        button:hover {
-            background-color: #c9302c;
-        }
-        #purchaseButton {
-            margin-top: 20px;
-            padding: 12px 24px;
-            font-size: 16px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            float: right;
-        }
-        #purchaseButton:hover {
-            background-color: #218838;
-        }
-
-        #userPanel {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 10px;
-    position: fixed;
-    top: 15px;
-    right: 15px;
-    background-color: #f0f0f0; 
-    padding: 6px 12px;
-    border-radius: 10px;
-    z-index: 999;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3); 
-}
-
-    #userPanel img {
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        object-fit: cover;
-    }
-
-    #usernameDisplay {
-    color: black;
-    font-weight: bold;
-    font-size: 14px;
-}
-
-    #logoutBtn {
-        background-color: #dc3545;
-        color: white;
-        border: none;
-        padding: 6px 10px;
-        border-radius: 6px;
-        cursor: pointer;
-    }
-
-    #logoutBtn:hover {
-        background-color: #b02a37;
-    }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RetailStock — Sepetim</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a12;--surface:rgba(255,255,255,0.035);--border:rgba(255,255,255,0.06);--text:#fffffe;--text-dim:rgba(255,255,255,0.45);--text-muted:rgba(255,255,255,0.25);--purple:#7f5af0;--purple-glow:rgba(127,90,240,0.35);--green:#2cb67d;--green-glow:rgba(44,182,125,0.3);--red:#e53170;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+body::before{content:'';position:fixed;bottom:-200px;left:-200px;width:500px;height:500px;background:radial-gradient(circle,rgba(44,182,125,0.06) 0%,transparent 70%);pointer-events:none;}
+.top-nav{display:flex;align-items:center;justify-content:space-between;padding:12px 28px;background:rgba(10,10,18,0.75);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:var(--text-dim);text-decoration:none;font-size:13px;font-weight:500;padding:8px 16px;border-radius:10px;background:var(--surface);border:1px solid var(--border);transition:all .3s;position:relative;overflow:hidden;}
+.back-link::after{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s;background:radial-gradient(circle at center,rgba(255,255,255,0.1) 0%,transparent 70%);}
+.back-link:hover{color:var(--purple);border-color:rgba(127,90,240,0.3);background:rgba(127,90,240,0.08);}
+.back-link:hover::after{opacity:1;}
+.nav-brand{font-size:17px;font-weight:700;background:linear-gradient(135deg,var(--purple),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.user-area{display:none;align-items:center;gap:8px;}
+.user-area img{width:30px;height:30px;border-radius:50%;border:2px solid rgba(127,90,240,0.3);}
+.user-area span{font-size:13px;font-weight:500;color:var(--text-dim);}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .3s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;}
+.btn::after{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s;background:radial-gradient(circle at center,rgba(255,255,255,0.15) 0%,transparent 70%);}
+.btn:hover::after{opacity:1;}
+.btn:active{transform:scale(.97);}
+.btn-danger-sm{padding:6px 14px;font-size:12px;border-radius:8px;background:rgba(229,49,112,0.1);color:var(--red);border:1px solid rgba(229,49,112,0.15);}
+.btn-danger-sm:hover{background:rgba(229,49,112,0.18);border-color:rgba(229,49,112,0.3);}
+.btn-purchase{padding:14px 36px;border-radius:14px;background:linear-gradient(135deg,var(--green),#1a9a6a);color:#fff;font-size:15px;font-weight:600;box-shadow:0 4px 16px var(--green-glow);}
+.btn-purchase:hover{box-shadow:0 8px 30px var(--green-glow);transform:translateY(-2px);}
+.container{max-width:1000px;margin:0 auto;padding:36px 28px 80px;position:relative;z-index:1;}
+.page-title{font-size:30px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px;}
+.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:28px;}
+.glass{background:var(--surface);border:1px solid var(--border);border-radius:18px;overflow:hidden;}
+table{width:100%;border-collapse:separate;border-spacing:0;}
+thead th{background:rgba(127,90,240,0.08);color:var(--purple);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;padding:13px 16px;text-align:left;}
+thead th:first-child{border-radius:0;}thead th:last-child{border-radius:0;}
+tbody td{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.025);font-size:13px;color:var(--text-dim);vertical-align:middle;transition:background .2s;}
+tbody tr:hover td{background:rgba(255,255,255,0.015);}
+tbody td img{border-radius:10px;object-fit:contain;background:rgba(255,255,255,0.02);}
+.price{color:var(--green);font-weight:700;font-size:14px;}
+.cart-footer{display:flex;justify-content:flex-end;padding:20px 24px;border-top:1px solid var(--border);}
+.empty{text-align:center;padding:80px 20px;color:var(--text-muted);}
+.empty .icon{font-size:52px;margin-bottom:14px;}
+.also-section{margin-top:36px;}
+.also-section h3{font-size:17px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.suggest-grid{display:flex;flex-wrap:wrap;gap:14px;}
+.scard{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:165px;padding:16px;text-align:center;transition:all .35s cubic-bezier(.4,0,.2,1);}
+.scard:hover{transform:translateY(-5px);border-color:rgba(127,90,240,0.2);box-shadow:0 16px 36px rgba(0,0,0,0.3);}
+.scard img{width:85px;height:85px;border-radius:10px;object-fit:contain;margin-bottom:10px;background:rgba(255,255,255,0.02);}
+.scard .name{font-size:12px;font-weight:500;margin-bottom:3px;color:var(--text-dim);}
+.scard .sprice{color:var(--green);font-weight:700;font-size:14px;margin-bottom:10px;}
+.scard button{width:100%;padding:7px;border:none;border-radius:8px;background:rgba(127,90,240,0.12);color:var(--purple);font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;border:1px solid rgba(127,90,240,0.15);transition:all .2s;}
+.scard button:hover{background:rgba(127,90,240,0.2);border-color:rgba(127,90,240,0.3);}
+.loading{display:flex;flex-direction:column;align-items:center;padding:60px;gap:12px;}
+.spinner{width:36px;height:36px;border:3px solid rgba(127,90,240,0.15);border-top-color:var(--purple);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.qty-controls{display:flex;align-items:center;gap:6px;}
+.qty-btn{width:28px;height:28px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-family:'Inter',sans-serif;}
+.qty-btn:hover{background:rgba(127,90,240,0.15);border-color:rgba(127,90,240,0.3);color:var(--purple);}
+.qty-val{min-width:28px;text-align:center;font-weight:600;font-size:14px;}
+#rs-toast-container{position:fixed;top:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;}
+.rs-toast{pointer-events:all;display:flex;align-items:flex-start;gap:12px;min-width:320px;max-width:440px;padding:16px 20px;border-radius:16px;background:rgba(22,22,42,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.08);box-shadow:0 20px 50px rgba(0,0,0,0.5);font-family:'Inter',sans-serif;color:#fffffe;animation:rsToastIn .4s cubic-bezier(.4,0,.2,1);transition:all .35s;cursor:pointer;position:relative;overflow:hidden;}
+.rs-toast::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;}
+.rs-toast.success::before{background:linear-gradient(180deg,#2cb67d,#1a9a6a);}
+.rs-toast.error::before{background:linear-gradient(180deg,#e53170,#c42860);}
+.rs-toast.info::before{background:linear-gradient(180deg,#7f5af0,#6246ea);}
+.rs-toast.warning::before{background:linear-gradient(180deg,#f0a500,#d49200);}
+.rs-toast.leaving{opacity:0;transform:translateX(100%) scale(.95);}
+@keyframes rsToastIn{from{opacity:0;transform:translateX(60px) scale(.95);}to{opacity:1;transform:translateX(0) scale(1);}}
+.rs-toast-icon{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.rs-toast.success .rs-toast-icon{background:rgba(44,182,125,0.15);}
+.rs-toast.error .rs-toast-icon{background:rgba(229,49,112,0.15);}
+.rs-toast.info .rs-toast-icon{background:rgba(127,90,240,0.15);}
+.rs-toast.warning .rs-toast-icon{background:rgba(240,165,0,0.15);}
+.rs-toast-body{flex:1;min-width:0;}
+.rs-toast-title{font-size:13px;font-weight:600;margin-bottom:3px;}
+.rs-toast.success .rs-toast-title{color:#2cb67d;}
+.rs-toast.error .rs-toast-title{color:#e53170;}
+.rs-toast.info .rs-toast-title{color:#7f5af0;}
+.rs-toast.warning .rs-toast-title{color:#f0a500;}
+.rs-toast-message{font-size:13px;color:rgba(255,255,255,0.55);line-height:1.5;word-break:break-word;}
+.rs-toast-close{width:24px;height:24px;border-radius:8px;border:none;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.3);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.rs-toast-close:hover{background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);}
+.rs-toast-progress{position:absolute;bottom:0;left:0;height:2px;animation:rsProgress linear forwards;}
+.rs-toast.success .rs-toast-progress{background:rgba(44,182,125,0.5);}
+.rs-toast.error .rs-toast-progress{background:rgba(229,49,112,0.5);}
+.rs-toast.info .rs-toast-progress{background:rgba(127,90,240,0.5);}
+.rs-toast.warning .rs-toast-progress{background:rgba(240,165,0,0.5);}
+@keyframes rsProgress{from{width:100%;}to{width:0%;}}
+.rs-confirm-overlay{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;animation:rsOverlayIn .25s ease;}
+@keyframes rsOverlayIn{from{opacity:0;}to{opacity:1;}}
+.rs-confirm-box{background:linear-gradient(180deg,#1a1a30,#12121f);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:32px;width:380px;max-width:90vw;box-shadow:0 30px 60px rgba(0,0,0,0.6);font-family:'Inter',sans-serif;color:#fffffe;text-align:center;animation:rsConfirmIn .35s cubic-bezier(.4,0,.2,1);}
+@keyframes rsConfirmIn{from{opacity:0;transform:scale(.92) translateY(12px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.rs-confirm-icon{width:56px;height:56px;border-radius:16px;background:rgba(127,90,240,0.12);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 16px;}
+.rs-confirm-title{font-size:17px;font-weight:600;margin-bottom:8px;}
+.rs-confirm-message{font-size:14px;color:rgba(255,255,255,0.5);line-height:1.5;margin-bottom:24px;}
+.rs-confirm-actions{display:flex;gap:10px;justify-content:center;}
+.rs-confirm-btn{flex:1;padding:12px;border:none;border-radius:12px;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .3s;}
+.rs-confirm-cancel{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.08);}
+.rs-confirm-cancel:hover{background:rgba(255,255,255,0.1);color:#fff;}
+.rs-confirm-ok{background:linear-gradient(135deg,#7f5af0,#6246ea);color:#fff;box-shadow:0 4px 16px rgba(127,90,240,0.35);}
+.rs-confirm-ok:hover{box-shadow:0 6px 24px rgba(127,90,240,0.5);transform:translateY(-1px);}
+</style>
 </head>
 <body>
-
-<h2>🛒 Sepetim</h2>
-
-<div id="userPanel" style="display: none;">
-    <img src="pp-placeholder.png" alt="Avatar">
-    <span id="usernameDisplay"></span>
-    <button id="logoutBtn" onclick="logout()">Çıkış Yap</button>
-</div>
-
-
-<div id="cartContent">
-    <p>Sepet yükleniyor...</p>
-</div>
-
-
 <script>
-    document.addEventListener("DOMContentLoaded", async function () {
-        const customerId = localStorage.getItem("customerId");
-        const container = document.getElementById("cartContent");
-
-        if (!customerId) {
-    container.innerHTML = `<p>❌ Kullanıcı bulunamadı.</p>`;
-    return;
-}
-
-        try {
-            const response = await fetch(`https://localhost:7232/api/Cart/cart/${customerId}`);
-            const data = await response.json();
-
-            console.log("API Yanıtı:", data);
-
-            if (!data || !data.items || data.items.length === 0) {
-                container.innerHTML += "<p>📭 Sepet boş.</p>";
-                return;
-            }
-
-            let html = `<table>
-                <tr>
-                    <th>Görsel</th>
-                    <th>Barkod</th>
-                    <th>Mağaza</th>
-                    <th>Adet</th>
-                    <th>Fiyat</th>
-                    <th>İşlem</th>
-                </tr>`;
-
-            data.items.forEach(item => {
-                const imageSrc = item.imageBase64
-                    ? `data:image/png;base64,${item.imageBase64}`
-                    : "https://via.placeholder.com/100x100?text=Yok";
-
-                    html += `<tr>
-        <td><img src="${imageSrc}" alt="Ürün" /></td>
-        <td>${item.barcode ?? "YOK"}</td>
-        <td>${item.storeId ?? "YOK"}</td>
-        <td>${item.quantity ?? 0}</td>
-        <td>₺${item.price ?? "Belirsiz"}</td>
-        <td>
-            <button onclick="removeFromCart('${item.barcode}', ${item.storeId})">Sepetten Çıkar</button>
-        </td>
-    </tr>`;
-            });
-
-            html += `</table>`;
-
-           
-            html += `
-                <button id="purchaseButton" onclick="completePurchase()">✅ Satın Al</button>
-                <div style="clear: both;"></div>
-
-                <div id="alsoBoughtContainer" style="margin-top: 40px;">
-        <h3>🛍️ Bu ürünü alanlar bunları da aldı</h3>
-        <div id="alsoBoughtItems" style="display: flex; flex-wrap: wrap; gap: 16px;"></div>
-    </div>
-            `;
-
-            const barcodesInCart = data.items.map(i => i.barcode);
-loadAlsoBought(barcodesInCart);
-container.innerHTML = html;
-
-        } catch (error) {
-            console.error("API Hatası:", error);
-            container.innerHTML += `<p style="color:red;">❌ API hatası oluştu</p>`;
-        }
-    });
-
-    async function removeFromCart(barcode, storeId) {
-        const customerId = localStorage.getItem("customerId");
-        if (!customerId) {
-            alert("Kullanıcı oturumu bulunamadı.");
-            return;
-        }
-
-        try {
-            const response = await fetch("https://localhost:7232/api/Cart/remove-item", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    customerId: parseInt(customerId),
-                    barcode: barcode,
-                    storeId: storeId
-                })
-            });
-
-            if (response.ok) {
-                alert("Ürün sepetten çıkarıldı.");
-                location.reload(); 
-            } else {
-                const err = await response.json();
-                alert("Silme başarısız: " + (err.message || "Hata oluştu."));
-            }
-        } catch (err) {
-            console.error("Silme hatası:", err);
-            alert("Bir hata oluştu.");
-        }
-    }
-
-    async function completePurchase() {
-        const customerId = localStorage.getItem("customerId");
-        if (!customerId) {
-            alert("Kullanıcı oturumu bulunamadı.");
-            return;
-        }
-
-        try {
-            const response = await fetch(`https://localhost:7232/api/Cart/complete-purchase/${customerId}`, {
-                method: "POST"
-            });
-
-            const result = await response.json();
-
-            if (response.ok && result.isSuccess) {
-                alert("✅ Satın alma başarılı!");
-                localStorage.removeItem("cartStoreId");
-                location.reload();
-            } else {
-                alert("❌ Satın alma başarısız: " + result.message);
-            }
-        } catch (error) {
-            console.error("Satın alma hatası:", error);
-            alert("❌ Bir hata oluştu.");
-        }
-    }
-
-async function loadAlsoBought(cartBarcodes) {
-    const currentBarcode = cartBarcodes[0];
-    const customerId = localStorage.getItem("customerId");
-    let allowedStoreId = null;
-
-    try {
-       
-        const cartRes = await fetch(`https://localhost:7232/api/Cart/cart/${customerId}`);
-        const cartData = await cartRes.json();
-        if (cartData.items?.length > 0) {
-            allowedStoreId = cartData.items[0].storeId;
-        }
-
-        
-        const res = await fetch(`https://localhost:7232/api/Sales/also-bought/${currentBarcode}?customerId=${customerId}`);
-        const data = await res.json();
-
-        const container = document.getElementById("alsoBoughtItems");
-
-        if (!data || data.length === 0) {
-            container.innerHTML = "<p>📭 Önerilecek başka ürün bulunamadı.</p>";
-            return;
-        }
-
-        const filteredData = data.filter(item =>
-            !cartBarcodes.includes(item.barcode) &&
-            item.optionCount > 0 &&
-            (allowedStoreId === null || parseInt(item.storeId) === parseInt(allowedStoreId)) 
-        );
-
-        if (filteredData.length === 0) {
-            container.innerHTML = "<p>📭 Aynı mağazadan uygun öneri bulunamadı.</p>";
-            return;
-        }
-
-        let html = "";
-        filteredData.forEach(item => {
-            const imgSrc = item.imageBase64
-                ? `data:image/jpeg;base64,${item.imageBase64}`
-                : "https://via.placeholder.com/100x100";
-
-            html += `
-                <div style="display:inline-block; margin:10px; padding:10px; border:1px solid #ccc; border-radius:10px; width:160px; text-align:center;">
-                    <img src="${imgSrc}" style="width:100px; height:100px; border-radius:8px;">
-                    <p><strong>${item.productCode}</strong></p>
-                    <p><strong>₺${item.price?.toFixed(2) ?? "Belirsiz"}</strong></p>
-                    <button onclick='addToCartFull(${JSON.stringify(item)})'>🛒 Sepete Ekle</button>
-                </div>
-            `;
-        });
-
-        container.innerHTML = html;
-
-    } catch (error) {
-        console.error("Birlikte alınan ürünler yüklenirken hata:", error);
-        document.getElementById("alsoBoughtItems").innerHTML = "<p>❌ Öneriler yüklenemedi.</p>";
-    }
-}
-
-
-async function addToCartFull(item) {
-    const customerId = parseInt(localStorage.getItem("customerId"));
-    const barcode = item.barcode;
-    const storeId = item.storeId;
-    const quantity = 1;
-    const imageBase64 = item.imageBase64 ?? "";
-    const price = item.price ?? 0;
-
-    if (!customerId || !barcode || !price || !storeId) {
-        alert("Eksik bilgi, giriş yapın ve ürünü kontrol edin.");
-        return;
-    }
-
-    try {
-        const cartRes = await fetch(`https://localhost:7232/api/Cart/cart/${customerId}`);
-        const cartData = await cartRes.json();
-
-        if (cartData.items && cartData.items.length > 0) {
-            const firstStoreId = cartData.items[0].storeId;
-            if (firstStoreId !== storeId) {
-                alert("❌ Bu ürün farklı bir mağazaya ait. Aynı anda sadece tek bir mağazadan alışveriş yapabilirsiniz.");
-                return;
-            }
-        }
-
-        const payload = {
-            customerId,
-            barcode,
-            storeId,
-            quantity,
-            price,
-            imageBase64
-        };
-
-        const response = await fetch("https://localhost:7232/api/Cart/add-item", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        });
-
-        const result = await response.json();
-
-        if (response.ok && (result.success || result.isSuccess)) {
-            alert("🛒 Ürün sepete eklendi!");
-            location.reload();
-        } else {
-            alert("❌ Sepete eklenemedi: " + (result.message || "Sunucu hatası."));
-        }
-
-    } catch (err) {
-        console.error("Sepete ekleme hatası:", err);
-        alert("❌ Hata oluştu.");
-    }
-}
-
-async function addToCart(barcode) {
-    const customerId = localStorage.getItem("customerId");
-    const storeId = 1; 
-    const quantity = 1;
-
-    try {
-        const response = await fetch("https://localhost:7232/api/Cart/add-item", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                customerId: parseInt(customerId),
-                barcode,
-                storeId,
-                quantity
-            })
-        });
-
-        const result = await response.json();
-
-        if (response.ok && result.isSuccess) {
-            alert("🛒 Ürün sepete eklendi!");
-        } else {
-            alert("❌ Sepete eklenemedi: " + (result.message ?? "Hata"));
-        }
-    } catch (err) {
-        console.error("Sepete ekleme hatası:", err);
-        alert("❌ Bir hata oluştu.");
-    }
-}
-
-
-document.addEventListener("DOMContentLoaded", () => {
-    const username = localStorage.getItem("username");
-    const usernameDisplay = document.getElementById("usernameDisplay");
-
-    if (usernameDisplay && username) {
-        usernameDisplay.textContent = username;
-    } else if (usernameDisplay) {
-        usernameDisplay.textContent = "Misafir";
-    }
-});
-
-
-window.onload = function () {
-    const username = localStorage.getItem("username");
-    const userPanel = document.getElementById("userPanel");
-    const usernameDisplay = document.getElementById("usernameDisplay");
-
-    if (username && userPanel && usernameDisplay) {
-        usernameDisplay.innerText = username;
-        userPanel.style.display = "flex";
-    }
-};
-
-
-function logout() {
-    localStorage.removeItem("username");
-    localStorage.removeItem("customerId");
-    window.location.href = "jsDeneme.html";
-}
+(function(){function getC(){let c=document.getElementById('rs-toast-container');if(!c){c=document.createElement('div');c.id='rs-toast-container';document.body.appendChild(c);}return c;}
+function showToast(m,d){d=d||4000;const c=getC();let tp='info',ti='Bilgi',ic='ℹ️';const s=String(m);if(s.includes('✅')||s.includes('başarılı')||s.includes('eklendi')||s.includes('güncellendi')){tp='success';ti='Başarılı';ic='✅';}else if(s.includes('❌')||s.includes('hata')||s.includes('Hata')||s.includes('başarısız')||s.includes('yetersiz')||s.includes('eklenemez')){tp='error';ti='Hata';ic='❌';}else if(s.includes('⚠')||s.includes('Lütfen')||s.includes('lütfen')){tp='warning';ti='Uyarı';ic='⚠️';}
+const cl=s.replace(/[✅❌⚠️🛒📌]/g,'').trim();const t=document.createElement('div');t.className='rs-toast '+tp;
+t.innerHTML='<div class="rs-toast-icon">'+ic+'</div><div class="rs-toast-body"><div class="rs-toast-title">'+ti+'</div><div class="rs-toast-message">'+cl+'</div></div><button class="rs-toast-close" onclick="this.parentElement.classList.add(\'leaving\');setTimeout(function(){this.parentElement.remove()}.bind(this),350)">✕</button><div class="rs-toast-progress" style="animation-duration:'+d+'ms"></div>';
+t.addEventListener('click',function(e){if(e.target.classList.contains('rs-toast-close'))return;t.classList.add('leaving');setTimeout(function(){t.remove();},350);});
+c.appendChild(t);setTimeout(function(){if(t.parentElement){t.classList.add('leaving');setTimeout(function(){t.remove();},350);}},d);}
+function showConfirm(m){return new Promise(function(resolve){const ov=document.createElement('div');ov.className='rs-confirm-overlay';const cl=String(m).replace(/[✅❌⚠️🛒📌]/g,'').trim();
+ov.innerHTML='<div class="rs-confirm-box"><div class="rs-confirm-icon">❓</div><div class="rs-confirm-title">Onay Gerekli</div><div class="rs-confirm-message">'+cl+'</div><div class="rs-confirm-actions"><button class="rs-confirm-btn rs-confirm-cancel" id="rsNo">İptal</button><button class="rs-confirm-btn rs-confirm-ok" id="rsYes">Evet</button></div></div>';
+document.body.appendChild(ov);ov.querySelector('#rsYes').onclick=function(){ov.remove();resolve(true);};ov.querySelector('#rsNo').onclick=function(){ov.remove();resolve(false);};ov.addEventListener('click',function(e){if(e.target===ov){ov.remove();resolve(false);}});});}
+window.alert=function(msg){showToast(msg);};window.rsConfirm=showConfirm;window.rsToast=showToast;})();
 </script>
-
+<nav class="top-nav">
+    <a href="anasayfa.html" class="back-link">← Panele Dön</a>
+    <span class="nav-brand">RetailStock</span>
+    <div class="user-area" id="userPanel"><img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt=""><span id="usernameDisplay"></span><button class="btn btn-danger-sm" onclick="logout()">Çıkış</button></div>
+</nav>
+<div class="container">
+    <div class="page-title">🛒 Sepetim</div>
+    <div class="page-sub">Alışveriş sepetinizdeki ürünler</div>
+    <div id="cartContent"><div class="loading"><div class="spinner"></div><span style="color:var(--text-muted);font-size:13px;">Yükleniyor...</span></div></div>
+</div>
+<script>
+const API='https://localhost:7232';
+document.addEventListener("DOMContentLoaded",async function(){const cid=localStorage.getItem("customerId"),c=document.getElementById("cartContent");if(!cid){c.innerHTML='<div class="empty"><div class="icon">❌</div><p>Lütfen giriş yapın.</p></div>';return;}
+try{const r=await fetch(API+'/api/Cart/cart/'+cid);const d=await r.json();if(!d||!d.items||!d.items.length){c.innerHTML='<div class="empty"><div class="icon">📭</div><p>Sepetiniz boş.</p></div>';return;}
+let h='<div class="glass"><table><thead><tr><th>Görsel</th><th>Barkod</th><th>Mağaza</th><th>Adet</th><th>Fiyat</th><th></th></tr></thead><tbody>';
+d.items.forEach(i=>{const img=i.imageBase64?(i.imageBase64.startsWith('data:')?i.imageBase64:'data:image/png;base64,'+i.imageBase64):'';h+=`<tr data-barcode="${i.barcode}" data-storeid="${i.storeId}" data-price="${i.price||0}" data-img="${(i.imageBase64||'').substring(0,100)}"><td>${img?`<img src="${img}" width="72" height="72">`:'—'}</td><td>${i.barcode||'—'}</td><td>${i.storeId||'—'}</td><td><div class="qty-controls"><button class="qty-btn" onclick="changeQty(this,-1)">−</button><span class="qty-val">${i.quantity||1}</span><button class="qty-btn" onclick="changeQty(this,1)">+</button></div></td><td class="price">₺${i.price||'—'}</td><td><button class="btn btn-danger-sm" onclick="removeFromCart('${i.barcode}',${i.storeId})">Çıkar</button></td></tr>`;});
+h+='</tbody></table><div class="cart-footer"><button class="btn btn-purchase" onclick="completePurchase()">✅ Satın Al</button></div></div>';
+h+='<div class="also-section"><h3>🛍️ Bu ürünü alanlar bunları da aldı</h3><div id="alsoBoughtItems" class="suggest-grid"></div></div>';
+c.innerHTML=h;loadAlsoBought(d.items.map(i=>i.barcode));}catch(e){console.error(e);c.innerHTML='<div class="empty"><div class="icon">❌</div><p>API hatası.</p></div>';}});
+async function removeFromCart(bc,sid){const cid=localStorage.getItem("customerId");if(!cid)return;try{const r=await fetch(API+'/api/Cart/remove-item',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customerId:parseInt(cid),barcode:bc,storeId:sid})});if(r.ok){alert('✅ Ürün sepetten çıkarıldı.');setTimeout(()=>location.reload(),1200);}else{const e=await r.json();alert('❌ '+(e.message||'Hata'));}}catch{alert('❌ Hata.');}}
+async function changeQty(btn,delta){const row=btn.closest('tr'),bc=row.dataset.barcode,sid=parseInt(row.dataset.storeid),valEl=row.querySelector('.qty-val');let cur=parseInt(valEl.textContent)||1;const nv=cur+delta;if(nv<1)return;const cid=parseInt(localStorage.getItem('customerId'));try{const sr=await fetch(API+'/api/Customer/stock-by-barcode/'+bc);const sd=await sr.json();let maxStock=0;sd.forEach(function(s){maxStock+=s.optionCount||0;});if(nv>maxStock){alert('❌ Stok yetersiz! Maks: '+maxStock);return;}await fetch(API+'/api/Cart/remove-item',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customerId:cid,barcode:bc,storeId:sid})});const price=parseFloat(row.dataset.price)||0;const img64=row.querySelector('img')?row.querySelector('img').src.split(',')[1]||'':'';await fetch(API+'/api/Cart/add-item',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customerId:cid,barcode:bc,storeId:sid,quantity:nv,price:price,imageBase64:img64})});valEl.textContent=nv;}catch(e){console.error(e);}}
+async function completePurchase(){const cid=localStorage.getItem('customerId');if(!cid)return;try{const r=await fetch(API+'/api/Cart/complete-purchase/'+cid,{method:'POST'});const res=await r.json();if(r.ok&&res.isSuccess){alert('✅ Satın alma başarılı!');localStorage.removeItem('cartStoreId');setTimeout(()=>location.reload(),1500);}else alert('❌ '+(res.message||'Satın alma başarısız.'));}catch{alert('❌ Hata.');}}
+async function loadAlsoBought(bcs){const cid=localStorage.getItem("customerId");try{const cr=await fetch(API+'/api/Cart/cart/'+cid);const cd=await cr.json();const cartStoreIds=cd.items?.map(i=>i.storeId)||[];const uniqueStores=[...new Set(cartStoreIds)];const r=await fetch(API+'/api/Sales/also-bought/'+bcs[0]+'?customerId='+cid);const data=await r.json();const c=document.getElementById("alsoBoughtItems");if(!data||!data.length){c.innerHTML='<p style="color:var(--text-muted);">Öneri yok.</p>';return;}
+const seen=new Set();const f=data.filter(i=>{if(bcs.includes(i.barcode)||i.optionCount<=0)return false;if(uniqueStores.length>0&&!uniqueStores.includes(i.storeId))return false;if(seen.has(i.barcode))return false;seen.add(i.barcode);return true;});if(!f.length){c.innerHTML='<p style="color:var(--text-muted);">Uygun öneri yok.</p>';return;}
+let h='';f.forEach(i=>{const img=i.imageBase64?(i.imageBase64.startsWith('data:')?i.imageBase64:'data:image/jpeg;base64,'+i.imageBase64):'';h+=`<div class="scard">${img?`<img src="${img}">`:'<div style="width:85px;height:85px;"></div>'}<div class="name">${i.productCode}</div><div class="sprice">₺${i.price?.toFixed(2)||'—'}</div><button onclick='addToCartFull(${JSON.stringify(i)})'>🛒 Ekle</button></div>`;});c.innerHTML=h;}catch(e){console.error(e);document.getElementById("alsoBoughtItems").innerHTML='<p style="color:var(--red);">Yüklenemedi.</p>';}}
+async function addToCartFull(item){const cid=parseInt(localStorage.getItem("customerId"));if(!cid||!item.barcode)return;try{const r=await fetch(API+'/api/Cart/add-item',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customerId:cid,barcode:item.barcode,storeId:item.storeId,quantity:1,price:item.price||0,imageBase64:item.imageBase64||''})});const res=await r.json();if(r.ok&&(res.success||res.isSuccess)){alert('✅ Ürün sepete eklendi!');setTimeout(()=>location.reload(),1200);}else alert('❌ '+(res.message||'Hata'));}catch{alert('❌ Hata.');}}
+window.onload=function(){const u=localStorage.getItem("username"),p=document.getElementById("userPanel"),d=document.getElementById("usernameDisplay");if(u&&p&&d){d.innerText=u;p.style.display="flex";}};
+function logout(){localStorage.removeItem("username");localStorage.removeItem("customerId");location.href="jsDeneme.html";}
+</script>
 </body>
 </html>
