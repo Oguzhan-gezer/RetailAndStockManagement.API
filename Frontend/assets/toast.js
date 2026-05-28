@@ -116,4 +116,5 @@
     // we fall back to native to avoid breaking existing code flow.
     window.rsConfirm = showConfirm;
     window.rsToast = showToast;
+    window.showToast = showToast;
 })();

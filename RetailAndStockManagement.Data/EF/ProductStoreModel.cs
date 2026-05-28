@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -17,6 +17,13 @@ public class ProductStoreModel
     public string Barcode { get; set; }
     public int StoreId { get; set; }
     public int OptionCount { get; set; }
+    public int SizeXS { get; set; }
+    public int SizeS { get; set; }
+    public int SizeM { get; set; }
+    public int SizeL { get; set; }
+    public int SizeXL { get; set; }
+    public int SizeXXL { get; set; }
+    public int SizeXXXL { get; set; }
 
     [ForeignKey("Barcode")]
     public ProductModel Product { get; set; }

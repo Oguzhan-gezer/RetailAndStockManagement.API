@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RetailAndStockManagement.Businness.Product.Models;
 using RetailAndStockManagement.Businness.Product.Requests;
@@ -29,7 +29,15 @@ public class GetAllProductsByStoreIdHandler : IRequestHandler<GetAllProductsBySt
                 ImageBase64 = x.Product.ImageBase64, 
                 OptionCount = x.OptionCount,
                 ProductCode = x.Product.ProductCode,
-                Price = x.Product.Price
+                Price = x.Product.Price,
+                ProductProperties = x.Product.ProductProperties,
+                SizeXS = x.SizeXS,
+                SizeS = x.SizeS,
+                SizeM = x.SizeM,
+                SizeL = x.SizeL,
+                SizeXL = x.SizeXL,
+                SizeXXL = x.SizeXXL,
+                SizeXXXL = x.SizeXXXL
             })
             .ToListAsync(cancellationToken);
     }

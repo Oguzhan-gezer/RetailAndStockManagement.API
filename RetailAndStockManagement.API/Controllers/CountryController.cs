@@ -1,12 +1,13 @@
-﻿using MediatR;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RetailAndStockManagement.Businness.Country.Requests;
-using System.Threading.Tasks;
 
 namespace RetailAndStockManagement.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class CountryController : ControllerBase
     {
         private readonly IMediator _mediator;

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,4 +14,13 @@ public class GetAllProductsByStoreIdModel
     public int OptionCount { get; set; }
     public string ProductCode { get; set; }
     public decimal Price { get; set; }
+    public string ProductProperties { get; set; } = string.Empty;
+
+    public int SizeXS { get; set; }
+    public int SizeS { get; set; }
+    public int SizeM { get; set; }
+    public int SizeL { get; set; }
+    public int SizeXL { get; set; }
+    public int SizeXXL { get; set; }
+    public int SizeXXXL { get; set; }
 }

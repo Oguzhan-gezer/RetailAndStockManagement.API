@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini SAP - Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/common.css">
+    <link rel="stylesheet" href="assets/toast.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">
+            <h2>Mini SAP <span class="badge badge-cancelled" style="vertical-align: middle; margin-left:10px;">ADMIN</span></h2>
+        </div>
+        <div class="user-actions">
+            <span id="userNameDisplay" style="margin-right: 1rem; font-weight: 500;"></span>
+            <button class="btn btn-outline" onclick="Auth.logout()">Çıkış Yap</button>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('users', this)">👤 Kullanıcı Yönetimi</div>
+            <div class="tab" onclick="switchTab('products', this)">📦 Ürün Yönetimi</div>
+        </div>
+
+        <!-- REKLAM ALANI (ADVERTISEMENT) -->
+        <div class="ad-banner" style="background: linear-gradient(45deg, var(--danger), var(--warning));">
+            <span>Reklam</span>
+            💼 Yeni Sezon Ürünlerinde %30 İndirim Başladı! Hemen Keşfedin! 🔥
+        </div>
+
+        <!-- 1. KULLANICILAR -->
+        <div id="users" class="tab-content active">
+            <div class="glass-panel" style="padding: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                    <h3>Sistem Kullanıcıları</h3>
+                    <button class="btn btn-primary" onclick="openUserModal()">+ Yeni Kullanıcı</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ad Soyad</th>
+                                <th>Kullanıcı Adı</th>
+                                <th>Rol</th>
+                                <th>Mağaza</th>
+                                <th>Durum</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. ÜRÜNLER -->
+        <div id="products" class="tab-content">
+            <div class="glass-panel" style="padding: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                    <h3>Tüm Ürünler</h3>
+                    <button class="btn btn-primary" onclick="openProductModal()">+ Yeni Ürün</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Resim</th>
+                                <th>Barkod</th>
+                                <th>Ürün Kodu</th>
+                                <th>Fiyat</th>
+                                <th>Özellikler</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Kullanıcı -->
+    <div class="modal-backdrop" id="userModal">
+        <div class="glass-panel modal">
+            <div class="modal-header">
+                <h3 id="userModalTitle">Kullanıcı Ekle</h3>
+                <button class="close-modal" onclick="closeModal('userModal')">&times;</button>
+            </div>
+            <form id="userForm">
+                <input type="hidden" id="userId">
+                <div class="input-group">
+                    <label>Kullanıcı Adı</label>
+                    <input type="text" id="userUsername" class="input-control" required>
+                </div>
+                <div class="input-group">
+                    <label>Ad Soyad</label>
+                    <input type="text" id="userFullName" class="input-control" required>
+                </div>
+                <div class="input-group">
+                    <label>Şifre (Boş bırakırsanız değişmez)</label>
+                    <input type="password" id="userPassword" class="input-control">
+                </div>
+                <div class="input-group">
+                    <label>Rol</label>
+                    <select id="userRole" class="input-control" onchange="toggleStoreSelect()">
+                        <option value="StoreManager">Mağaza Müdürü (StoreManager)</option>
+                        <option value="Admin">Sistem Yöneticisi (Admin)</option>
+                    </select>
+                </div>
+                <div class="input-group" id="storeSelectGroup">
+                    <label>Mağaza Ataması</label>
+                    <select id="userStore" class="input-control">
+                        <option value="">-- Mağaza Seçin --</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Kaydet</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Ürün -->
+    <div class="modal-backdrop" id="productModal">
+        <div class="glass-panel modal">
+            <div class="modal-header">
+                <h3 id="productModalTitle">Ürün Ekle</h3>
+                <button class="close-modal" onclick="closeModal('productModal')">&times;</button>
+            </div>
+            <form id="productForm">
+                <div class="input-group">
+                    <label>Barkod (Değiştirilemez)</label>
+                    <input type="text" id="prodBarcode" class="input-control" required>
+                </div>
+                <div class="input-group">
+                    <label>Ürün Kodu</label>
+                    <input type="text" id="prodCode" class="input-control" required>
+                </div>
+                <div class="input-group">
+                    <label>Fiyat (₺)</label>
+                    <input type="number" step="0.01" id="prodPrice" class="input-control" required>
+                </div>
+                <div class="input-group">
+                    <label>Özellikler</label>
+                    <input type="text" id="prodProps" class="input-control" value="">
+                </div>
+                <div class="input-group">
+                    <label>Ürün Resmi (Opsiyonel)</label>
+                    <input type="file" id="prodImage" class="input-control" accept="image/*">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Kaydet</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Resim Önizleme -->
+    <div class="modal-backdrop" id="imagePreviewModal" style="display: none; justify-content: center; align-items: center; z-index: 10000; background: rgba(0,0,0,0.8);" onclick="if(event.target === this) closeModal('imagePreviewModal')">
+        <div style="position: relative; max-width: 90vw; max-height: 90vh;">
+            <button class="close-modal" style="position: absolute; top: -35px; right: -15px; color: white; background: none; border: none; font-size: 2.5rem; cursor: pointer;" onclick="closeModal('imagePreviewModal')">&times;</button>
+            <img id="previewImage" src="" style="max-width: 100%; max-height: 90vh; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); object-fit: contain; background: white;">
+        </div>
+    </div>
+
+    <!-- MODAL: Mağazaya Ata -->
+    <div class="modal-backdrop" id="assignModal">
+        <div class="glass-panel modal">
+            <div class="modal-header">
+                <h3>Mağazaya Ürün Ata</h3>
+                <button class="close-modal" onclick="closeModal('assignModal')">&times;</button>
+            </div>
+            <form id="assignForm">
+                <div class="input-group">
+                    <label>Barkod</label>
+                    <input type="text" id="assignBarcode" class="input-control" readonly>
+                </div>
+                <div class="input-group">
+                    <label>Mağaza</label>
+                    <select id="assignStoreId" class="input-control" required>
+                        <option value="">-- Mağaza Seçin --</option>
+                    </select>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1rem;">
+                    <div><label>XS</label><input type="number" id="a_xs" class="input-control" value="0" min="0"></div>
+                    <div><label>S</label><input type="number" id="a_s" class="input-control" value="0" min="0"></div>
+                    <div><label>M</label><input type="number" id="a_m" class="input-control" value="0" min="0"></div>
+                    <div><label>L</label><input type="number" id="a_l" class="input-control" value="0" min="0"></div>
+                    <div><label>XL</label><input type="number" id="a_xl" class="input-control" value="0" min="0"></div>
+                    <div><label>XXL</label><input type="number" id="a_xxl" class="input-control" value="0" min="0"></div>
+                    <div><label>XXXL</label><input type="number" id="a_xxxl" class="input-control" value="0" min="0"></div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Ata / Stok Güncelle</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="assets/toast.js"></script>
+    <script src="assets/auth.js"></script>
+    <script>
+        const user = Auth.checkAuth('Admin');
+        if (!user) { /* stops */ }
+
+        document.getElementById('userNameDisplay').textContent = user.fullName;
+
+        let storesList = [];
+
+        async function init() {
+            await loadStores();
+            loadUsers();
+        }
+
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            element.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+
+            if (tabId === 'users') loadUsers();
+            if (tabId === 'products') loadProducts();
+        }
+
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        // --- STORES ---
+        async function loadStores() {
+            try {
+                storesList = await fetchWithAuth('/api/Store/getAll');
+                const sel = document.getElementById('userStore');
+                const sel2 = document.getElementById('assignStoreId');
+                storesList.forEach(s => {
+                    const opt = `<option value="${s.storeId}">${s.storeLocation}</option>`;
+                    if(sel) sel.innerHTML += opt;
+                    if(sel2) sel2.innerHTML += opt;
+                });
+            } catch(e) { console.error("Store load err", e); }
+        }
+
+        function toggleStoreSelect() {
+            const role = document.getElementById('userRole').value;
+            document.getElementById('storeSelectGroup').style.display = role === 'Admin' ? 'none' : 'block';
+            if(role === 'Admin') document.getElementById('userStore').value = '';
+        }
+
+        // --- USERS ---
+        async function loadUsers() {
+            try {
+                const data = await fetchWithAuth('/api/Admin/users');
+                const tbody = document.getElementById('usersTableBody');
+                tbody.innerHTML = '';
+                data.forEach(u => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${u.fullName}</td>
+                            <td>${u.username}</td>
+                            <td><span class="badge ${u.role==='Admin'?'badge-cancelled':'badge-info'}">${u.role}</span></td>
+                            <td>${u.storeName || '-'}</td>
+                            <td>${u.isActive ? '<span class="badge badge-active">Aktif</span>' : '<span class="badge badge-cancelled">Pasif</span>'}</td>
+                            <td>
+                                <button class="btn btn-outline" style="padding: 4px 8px; font-size:0.8rem" onclick='editUser(${JSON.stringify(u)})'>Düzenle</button>
+                                ${u.isActive ? `<button class="btn btn-danger" style="padding: 4px 8px; font-size:0.8rem" onclick="deleteUser(${u.id})">Sil</button>` : ''}
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch(e) {}
+        }
+
+        function openUserModal() {
+            document.getElementById('userForm').reset();
+            document.getElementById('userId').value = '';
+            document.getElementById('userPassword').required = true;
+            document.getElementById('userModalTitle').textContent = 'Yeni Kullanıcı Ekle';
+            toggleStoreSelect();
+            document.getElementById('userModal').style.display = 'flex';
+        }
+
+        function editUser(u) {
+            document.getElementById('userId').value = u.id;
+            document.getElementById('userUsername').value = u.username;
+            document.getElementById('userFullName').value = u.fullName;
+            document.getElementById('userPassword').required = false;
+            document.getElementById('userRole').value = u.role;
+            document.getElementById('userStore').value = u.storeId || '';
+            document.getElementById('userModalTitle').textContent = 'Kullanıcı Düzenle';
+            toggleStoreSelect();
+            document.getElementById('userModal').style.display = 'flex';
+        }
+
+        document.getElementById('userForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('userId').value;
+            const payload = {
+                username: document.getElementById('userUsername').value,
+                fullName: document.getElementById('userFullName').value,
+                role: document.getElementById('userRole').value,
+                storeId: document.getElementById('userStore').value ? parseInt(document.getElementById('userStore').value) : null
+            };
+            const pwd = document.getElementById('userPassword').value;
+            if(pwd) payload.password = pwd;
+            
+            try {
+                if(id) { // update
+                    payload.id = parseInt(id);
+                    await fetchWithAuth(`/api/Admin/users/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+                } else { // create
+                    await fetchWithAuth(`/api/Admin/users`, { method: 'POST', body: JSON.stringify(payload) });
+                }
+                showToast('Kullanıcı kaydedildi', 'success');
+                closeModal('userModal');
+                loadUsers();
+            } catch(err) { showToast('Hata oluştu', 'error'); }
+        });
+
+        async function deleteUser(id) {
+            if(!confirm('Kullanıcıyı pasif duruma getirmek istiyor musunuz?')) return;
+            await fetchWithAuth(`/api/Admin/users/${id}`, { method: 'DELETE' });
+            loadUsers();
+        }
+
+        // --- PRODUCTS ---
+        async function loadProducts() {
+            try {
+                const data = await fetchWithAuth('/api/Product/all');
+                const tbody = document.getElementById('productsTableBody');
+                tbody.innerHTML = '';
+                data.forEach(p => {
+                    const img = p.imageBase64 ? `<img src="${p.imageBase64}" style="width:40px; height:40px; object-fit:cover; border-radius:4px; cursor:pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" onclick="openImageModal('${p.imageBase64}')">` : '-';
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${img}</td>
+                            <td>${p.barcode}</td>
+                            <td>${p.productCode}</td>
+                            <td>${p.price} ₺</td>
+                            <td><small>${p.productProperties}</small></td>
+                            <td>
+                                <button class="btn btn-outline" style="padding: 4px 8px; font-size:0.8rem" onclick='editProduct(${JSON.stringify(p)})'>Düzenle</button>
+                                <button class="btn btn-primary" style="padding: 4px 8px; font-size:0.8rem; margin-left: 5px;" onclick='openAssignModal("${p.barcode}")'>Mağazaya Ata</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch(e) {}
+        }
+
+        function openProductModal() {
+            document.getElementById('productForm').reset();
+            document.getElementById('prodBarcode').readOnly = false;
+            document.getElementById('productModalTitle').textContent = 'Yeni Ürün Ekle';
+            document.getElementById('productModal').style.display = 'flex';
+        }
+
+        function openImageModal(src) {
+            document.getElementById('previewImage').src = src;
+            document.getElementById('imagePreviewModal').style.display = 'flex';
+        }
+
+        function editProduct(p) {
+            document.getElementById('prodBarcode').value = p.barcode;
+            document.getElementById('prodBarcode').readOnly = true;
+            document.getElementById('prodCode').value = p.productCode;
+            document.getElementById('prodPrice').value = p.price;
+            document.getElementById('prodProps').value = p.productProperties || '{}';
+            document.getElementById('productModalTitle').textContent = 'Ürün Düzenle';
+            document.getElementById('productModal').style.display = 'flex';
+        }
+
+        document.getElementById('productForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const barcode = document.getElementById('prodBarcode').value;
+            const isEdit = document.getElementById('prodBarcode').readOnly;
+            
+            const payload = {
+                barcode,
+                productCode: document.getElementById('prodCode').value,
+                price: parseFloat(document.getElementById('prodPrice').value),
+                productProperties: document.getElementById('prodProps').value
+            };
+            
+            const fileInput = document.getElementById('prodImage');
+            if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = async function(ev) {
+                    payload.imageBase64 = ev.target.result;
+                    await submitProductForm(payload, isEdit, barcode);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                await submitProductForm(payload, isEdit, barcode);
+            }
+        });
+
+        async function submitProductForm(payload, isEdit, barcode) {
+            try {
+                if(isEdit) {
+                    await fetchWithAuth(`/api/Admin/products/${barcode}`, { method: 'PUT', body: JSON.stringify(payload) });
+                } else {
+                    await fetchWithAuth(`/api/Admin/products`, { method: 'POST', body: JSON.stringify(payload) });
+                }
+                showToast('Ürün kaydedildi', 'success');
+                closeModal('productModal');
+                loadProducts();
+            } catch(err) { showToast(err.message || 'Hata oluştu', 'error'); }
+        }
+
+        function openAssignModal(barcode) {
+            document.getElementById('assignForm').reset();
+            document.getElementById('assignBarcode').value = barcode;
+            document.getElementById('assignModal').style.display = 'flex';
+        }
+
+        document.getElementById('assignForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = {
+                barcode: document.getElementById('assignBarcode').value,
+                storeId: parseInt(document.getElementById('assignStoreId').value),
+                sizeXS: parseInt(document.getElementById('a_xs').value) || 0,
+                sizeS: parseInt(document.getElementById('a_s').value) || 0,
+                sizeM: parseInt(document.getElementById('a_m').value) || 0,
+                sizeL: parseInt(document.getElementById('a_l').value) || 0,
+                sizeXL: parseInt(document.getElementById('a_xl').value) || 0,
+                sizeXXL: parseInt(document.getElementById('a_xxl').value) || 0,
+                sizeXXXL: parseInt(document.getElementById('a_xxxl').value) || 0
+            };
+
+            try {
+                await fetchWithAuth('/api/Admin/product-store', { method: 'POST', body: JSON.stringify(payload) });
+                showToast('Stok mağazaya atandı', 'success');
+                closeModal('assignModal');
+            } catch(err) {
+                showToast(err.message || 'Hata oluştu', 'error');
+            }
+        });
+
+        init();
+    </script>
+</body>
+</html>

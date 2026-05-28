@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini SAP - Giriş</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/common.css">
+    <link rel="stylesheet" href="assets/toast.css">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Animated Background Bubbles */
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            animation: float 10s infinite ease-in-out;
+        }
+        .bubble-1 {
+            width: 400px; height: 400px;
+            background: rgba(127, 90, 240, 0.4);
+            top: -100px; left: -100px;
+        }
+        .bubble-2 {
+            width: 300px; height: 300px;
+            background: rgba(44, 182, 125, 0.4);
+            bottom: -50px; right: -50px;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, 50px); }
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 2.5rem;
+            text-align: center;
+        }
+
+        .logo-area {
+            margin-bottom: 2rem;
+        }
+        .logo-area h1 {
+            font-size: 2rem;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+        .logo-area p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .btn-block {
+            width: 100%;
+            padding: 12px;
+            margin-top: 1rem;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bubble bubble-1"></div>
+    <div class="bubble bubble-2"></div>
+
+    <div class="glass-panel login-container">
+        <div class="logo-area">
+            <h1>Mini SAP</h1>
+            <p>Mağazalar Arası Transfer Yönetimi</p>
+        </div>
+
+        <form id="loginForm">
+            <div class="input-group" style="text-align: left;">
+                <label for="username">Kullanıcı Adı</label>
+                <input type="text" id="username" class="input-control" required autocomplete="username">
+            </div>
+
+            <div class="input-group" style="text-align: left;">
+                <label for="password">Şifre</label>
+                <input type="password" id="password" class="input-control" required autocomplete="current-password">
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block" id="loginBtn">Giriş Yap</button>
+        </form>
+    </div>
+
+    <script src="assets/toast.js"></script>
+    <script src="assets/auth.js"></script>
+    <script>
+        // Redirect if already logged in
+        if (Auth.isLoggedIn()) {
+            const user = Auth.getUser();
+            if (user && user.role === 'Admin') window.location.href = 'admin.html';
+            else if (user) window.location.href = 'anasayfa.html';
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('loginBtn');
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            btn.disabled = true;
+            btn.innerHTML = 'Giriş Yapılıyor...';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/Auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.isSuccess) {
+                    Auth.setToken(data.token);
+                    showToast('Giriş başarılı, yönlendiriliyorsunuz...', 'success');
+                    
+                    setTimeout(() => {
+                        if (data.role === 'Admin') {
+                            window.location.href = 'admin.html';
+                        } else {
+                            window.location.href = 'anasayfa.html';
+                        }
+                    }, 1000);
+                } else {
+                    showToast(data.message || 'Giriş başarısız.', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = 'Giriş Yap';
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Sunucuya bağlanılamadı.', 'error');
+                btn.disabled = false;
+                btn.innerHTML = 'Giriş Yap';
+            }
+        });
+    </script>
+</body>
+</html>

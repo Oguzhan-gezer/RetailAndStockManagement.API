@@ -1,6 +1,5 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
-using RetailAndStockManagement.Businness.Customer.Models;
 using RetailAndStockManagement.Businness.Store.Models;
 using RetailAndStockManagement.Businness.Store.Requests;
 using RetailAndStockManagement.Data.EF;

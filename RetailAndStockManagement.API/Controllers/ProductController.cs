@@ -1,18 +1,19 @@
-﻿using MediatR;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RetailAndStockManagement.Businness.Product.Models;
 using RetailAndStockManagement.Businness.Product.Requests;
 
 namespace RetailAndStockManagement.API.Controllers
 {
-
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProductController : ControllerBase
     {
         private readonly IMediator _mediator;
         public ProductController(IMediator mediator) => _mediator = mediator;
-       
+
         [HttpGet("getAllByStoreId")]
         public async Task<IActionResult> GetAllByStoreId([FromQuery] GetAllProductsByStoreIdRequest query)
         {
@@ -21,6 +22,7 @@ namespace RetailAndStockManagement.API.Controllers
         }
 
         [HttpPost("uploadImage")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UploadImage([FromForm] UploadImageRequest request)
         {
             var result = await _mediator.Send(request);
@@ -38,14 +40,11 @@ namespace RetailAndStockManagement.API.Controllers
             return Ok(result);
         }
 
-
         [HttpGet("all")]
         public async Task<IActionResult> GetAllProducts()
         {
             var result = await _mediator.Send(new GetAllProductsRequest());
             return Ok(result);
         }
-
-
     }
 }
